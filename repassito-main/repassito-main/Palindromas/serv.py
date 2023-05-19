@@ -19,9 +19,9 @@ class Servidor:
 
     def check(self, message):
         if self.palindrome(message):
-            return "It's a palindrome"
+            return "Es palindroma"
         else:
-            return "It's not a palindrome"
+            return "No es palindroma"
 
     def run(self):
         self.initialize_connection()

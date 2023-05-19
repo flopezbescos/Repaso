@@ -24,7 +24,7 @@ class Servidor:
             with open("fichero.txt") as archivo:
                 frases = archivo.readlines()
         except FileNotFoundError:
-            with open("frases.txt") as archivo:
+            with open("frases1.txt") as archivo:
                 frases = self.count_frases(archivo)
         print(frases)
         return frases
