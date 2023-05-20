@@ -1,9 +1,10 @@
 import socket, time, pickle, select, sys, signal
 from sys import stderr
 
+
 class Cliente():
 
-    def initialize (self, destiny_direction=("127.0.0.1", 16021)):
+    def initialize(self, destiny_direction=("127.0.0.1", 16021)):
         self.destiny_direction = destiny_direction
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
         self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -14,7 +15,7 @@ class Cliente():
     def ask_for_petition(self):
         petition = input("Se chequeara si la frase o el numero es palindromo: ")
         return petition
-    
+
     def send_petition(self, petition):
         if petition == "Frase":
             word = input("Ingrese la frase que quiere chequear: ")
@@ -50,4 +51,4 @@ if __name__ == "__main__":
     client.send_petition(petition)
     client.receive_answer()
     client.disconnect()
-        
+

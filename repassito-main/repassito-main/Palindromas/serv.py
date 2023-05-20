@@ -1,6 +1,7 @@
 import sys
 import socket
 
+
 class Servidor:
     def initialize_connection(self):
         self.s_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
@@ -32,7 +33,7 @@ class Servidor:
                     petition = self.receive_petition()
                     if petition is None:
                         break
-                    word= self.receive_word()
+                    word = self.receive_word()
                     self.send_answer(word)
             except KeyboardInterrupt:
                 print("Closing server", file=sys.stderr)
@@ -51,12 +52,11 @@ class Servidor:
         elif petition == "Numero":
             print("Received:", petition, file=sys.stderr)
             return petition
-        
+
     def receive_word(self):
         word = self.s_client.recv(1024).decode("utf-8")
         print("Received word:", word, file=sys.stderr)
         return word
-
 
     def send_answer(self, word):
         response = self.check(word)
@@ -71,4 +71,3 @@ class Servidor:
 if __name__ == "__main__":
     server = Servidor()
     server.run()
-
