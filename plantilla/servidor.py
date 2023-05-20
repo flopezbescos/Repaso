@@ -1,40 +1,52 @@
 import socket
+import threading
 
-class ServidorTCP:
+
+class Servidor:
     def __init__(self, host, port):
         self.host = host
         self.port = port
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server_socket = None
 
-    def iniciar_servidor(self):
-        self.sock.bind((self.host, self.port))
-        print(f'Servidor escuchando en {self.host}:{self.port}')
-        self.sock.listen(1)
+    def iniciar(self):
+        # Crear un socket TCP/IP
+        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    def aceptar_conexion(self):
-        conn, addr = self.sock.accept()
-        print(f'Cliente conectado desde: {addr[0]}:{addr[1]}')
-        self.conexion = conn
+        # Vincular el socket a una dirección y puerto
+        self.server_socket.bind((self.host, self.port))
 
-    def recibir_datos(self):
-        data = self.conexion.recv(1024)
-        print(f'Datos recibidos del cliente: {data.decode()}')
+        # Escuchar conexiones entrantes
+        self.server_socket.listen(1)
+        print(f'Servidor escuchando en el puerto {self.port}...')
 
-    def enviar_respuesta(self, response):
-        self.conexion.sendall(response.encode())
+        while True:
+            # Aceptar una nueva conexión
+            client_socket, address = self.server_socket.accept()
+            print(f'Cliente conectado: {address[0]}:{address[1]}')
 
-    def cerrar_conexion(self):
-        self.conexion.close()
+            # Manejar la conexión en un hilo separado
+            client_thread = threading.Thread(target=self.handle_client, args=(client_socket,))
+            client_thread.start()
 
-    def cerrar_servidor(self):
-        self.sock.close()
+    def handle_client(self, client_socket):
+        while True:
+            # Recibir comando del cliente
+            data = client_socket.recv(1024).decode()
+            if not data:
+                break
+
+            # Calcular la respuesta (aquí puedes implementar la lógica necesaria)
+            response = 'Respuesta del servidor: ' + data.upper()
+
+            # Enviar la respuesta al cliente
+            client_socket.sendall(response.encode())
+
+        # Cerrar la conexión con el cliente
+        client_socket.close()
 
 
 if __name__ == '__main__':
-    servidor = ServidorTCP('localhost', 16041)
-    servidor.iniciar_servidor()
-    servidor.aceptar_conexion()
-    servidor.recibir_datos()
-    servidor.enviar_respuesta('¡Hola, cliente!')
-    servidor.cerrar_conexion()
-    servidor.cerrar_servidor()
+    # Crear instancia del servidor y ejecutarlo en un hilo separado
+    servidor = Servidor('localhost', 16041)
+    server_thread = threading.Thread(target=servidor.iniciar)
+    server_thread.start()
